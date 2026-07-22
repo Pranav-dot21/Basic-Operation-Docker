@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator Backend</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Calculator Frontend</h1>
+    <form id="calculator-form" class="calculator-form">
+      <label>
+        Input 1
+        <input type="number" step="any" name="input1" required />
+      </label>
+
+      <label>
+        Input 2
+        <input type="number" step="any" name="input2" required />
+      </label>
+
+      <label>
+        Operator
+        <select name="operator" required>
+          <option value="+">+</option>
+          <option value="-">-</option>
+          <option value="*">*</option>
+          <option value="/">/</option>
+        </select>
+      </label>
+
+      <button type="submit">Calculate</button>
+    </form>
+
+    <section class="result-card">
+      <h2>Result</h2>
+      <p id="result-text">Enter values and submit to see the result.</p>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
