@@ -8,8 +8,17 @@ from pymongo.collection import Collection
 
 
 def get_mongo_client() -> MongoClient:
-    uri = os.getenv("MONGO_URI", "mongodb://some-mongo:27017")
-    return MongoClient(uri)
+    # Priority: full URI, then user/password/host/port
+    uri = os.getenv("MONGO_URI")
+    if uri:
+        return MongoClient(uri)
+    host = os.getenv("MONGO_HOST", "some-mongo")
+    port = os.getenv("MONGO_PORT", "27017")
+    user = os.getenv("MONGO_USER")
+    password = os.getenv("MONGO_PASSWORD")
+    if user and password:
+        return MongoClient(f"mongodb://{user}:{password}@{host}:{port}")
+    return MongoClient(f"mongodb://{host}:{port}")
 
 
 def get_collection() -> Collection:
@@ -39,9 +48,9 @@ def save_calculation(input1: float, input2: float, operator: str, result: float)
     return str(inserted.inserted_id)
 
 
-def fetch_history(limit: int = 100) -> List[Dict[str, Any]]:
+def fetch_history(limit: int = 100, skip: int = 0) -> List[Dict[str, Any]]:
     collection = get_collection()
-    cursor = collection.find().sort("created_at", -1).limit(limit)
+    cursor = collection.find().sort("created_at", -1).skip(skip).limit(limit)
     return [
         {
             "id": str(item.get("_id")),

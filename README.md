@@ -64,6 +64,23 @@ curl http://localhost/history | jq .
 - `MONGO_DB` — database name (default `calculator_db`)
 - `MONGO_COLLECTION` — collection name (default `calculations`)
 
+Additional Mongo environment options:
+
+- `MONGO_HOST` — Mongo host (default `some-mongo`)
+- `MONGO_PORT` — Mongo port (default `27017`)
+- `MONGO_USER` — Mongo username (optional)
+- `MONGO_PASSWORD` — Mongo password (optional)
+
+If `MONGO_URI` is provided it takes precedence. Otherwise `MONGO_USER` and `MONGO_PASSWORD` (if set) are used to build the connection URI.
+
+### History pagination
+
+You can paginate `/history` with query parameters `limit` and `skip`:
+
+```bash
+curl "http://localhost/history?limit=10&skip=0" | jq .
+```
+
 ## Troubleshooting
 - Check container logs:
 

@@ -4,10 +4,15 @@ from db import init_db, save_calculation, fetch_history
 
 app = Flask(__name__)
 
-
-@app.before_first_request
-def startup():
+# Try to initialize the database, but do not crash the app if Mongo is not
+# immediately available. This avoids depending on Flask lifecycle hooks that
+# may differ across versions or environments.
+try:
     init_db()
+except Exception:
+    # Initialization will be attempted again on demand (lazy) when saving
+    # a calculation or fetching history.
+    pass
 
 
 @app.route("/")
@@ -55,7 +60,16 @@ def calculate():
 @app.route("/history", methods=["GET"])
 def history():
     try:
-        items = fetch_history()
+        # support pagination: ?limit=100&skip=0
+        limit_raw = request.args.get("limit", "100")
+        skip_raw = request.args.get("skip", "0")
+        try:
+            limit = int(limit_raw)
+            skip = int(skip_raw)
+        except ValueError:
+            return jsonify({"error": "limit and skip must be integers"}), 400
+
+        items = fetch_history(limit=limit, skip=skip)
         return jsonify({"history": items}), 200
     except Exception as e:
         return jsonify({"error": "Failed to fetch history", "details": str(e)}), 500
